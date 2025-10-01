@@ -1,4 +1,5 @@
 import { badWords } from './badwords';
+import { dictionaries, Language } from './dictionaries';
 
 export interface ModerationResult {
   isClean: boolean;
@@ -11,6 +12,7 @@ export interface ModerationOptions {
   caseSensitive?: boolean;
   returnFiltered?: boolean;
   replaceWith?: string;
+  language?: Language;
 }
 
 /**
@@ -33,15 +35,19 @@ export function moderate(
   const {
     caseSensitive = false,
     returnFiltered = false,
-    replaceWith = '***'
+    replaceWith = '***',
+    language = 'pt-br'
   } = options;
+
+  // Seleciona o dicionário apropriado baseado no idioma
+  const wordsToCheck = dictionaries[language] || badWords;
 
   const textToCheck = caseSensitive ? text : text.toLowerCase();
   const normalizedText = normalizeString(text);
   const detectedWords: string[] = [];
   let filteredText = text;
 
-  for (const badWord of badWords) {
+  for (const badWord of wordsToCheck) {
     const badWordToCheck = caseSensitive ? badWord : badWord.toLowerCase();
     const normalizedBadWord = normalizeString(badWord);
 
@@ -88,3 +94,5 @@ export function filter(
 }
 
 export { badWords } from './badwords';
+export { dictionaries, ptBR, en, es } from './dictionaries';
+export type { Language } from './dictionaries';
