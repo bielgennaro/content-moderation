@@ -1,0 +1,27 @@
+{
+  "name": "@bielgennaro/content-moderation",
+  "version": "1.0.0",
+  "description": "Biblioteca para moderação de conteúdo e detecção de palavras ofensivas",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "moderation",
+    "content",
+    "badwords",
+    "filter"
+  ],
+  "author": "bielgennaro",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
