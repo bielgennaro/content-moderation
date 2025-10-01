@@ -1,84 +1,84 @@
 # @bielgennaro/content-moderation
 
-Biblioteca TypeScript para moderação de conteúdo e detecção de palavras ofensivas em múltiplos idiomas (Português, Inglês e Espanhol).
+TypeScript library for content moderation and offensive word detection in multiple languages (Portuguese, English, and Spanish).
 
-## 📦 Instalação
+## 📦 Installation
 
 ```bash
 npm install @bielgennaro/content-moderation
 ```
 
-## 🚀 Uso
+## 🚀 Usage
 
-### Verificar se um texto é limpo
+### Check if text is clean
 
 ```typescript
 import { isClean } from '@bielgennaro/content-moderation';
 
-if (isClean('Este é um texto limpo')) {
-  console.log('Texto aprovado!');
+if (isClean('This is clean text')) {
+  console.log('Text approved!');
 }
 
-if (!isClean('Texto com palavrão')) {
-  console.log('Texto contém palavras ofensivas');
+if (!isClean('Text with bad word')) {
+  console.log('Text contains offensive words');
 }
 ```
 
-### Detectar palavras ofensivas
+### Detect offensive words
 
 ```typescript
 import { moderate } from '@bielgennaro/content-moderation';
 
-const result = moderate('Algum texto para verificar');
+const result = moderate('Some text to check');
 
-console.log(result.isClean); // true ou false
-console.log(result.detectedWords); // ['palavra1', 'palavra2']
-console.log(result.originalText); // texto original
+console.log(result.isClean); // true or false
+console.log(result.detectedWords); // ['word1', 'word2']
+console.log(result.originalText); // original text
 ```
 
-### Filtrar conteúdo ofensivo
+### Filter offensive content
 
 ```typescript
 import { filter } from '@bielgennaro/content-moderation';
 
-const textoLimpo = filter('Texto com palavrão aqui');
-// Retorna: "Texto com *** aqui"
+const cleanText = filter('Text with bad word here');
+// Returns: "Text with *** here"
 
-// Personalizar o substituto
-const textoCustom = filter('Texto com palavrão', '[CENSURADO]');
-// Retorna: "Texto com [CENSURADO]"
+// Customize replacement
+const customText = filter('Text with bad word', '[CENSORED]');
+// Returns: "Text with [CENSORED]"
 ```
 
-### Moderação com opções avançadas
+### Advanced moderation with options
 
 ```typescript
 import { moderate } from '@bielgennaro/content-moderation';
 
-const result = moderate('Texto para verificar', {
-  caseSensitive: false,      // Ignora maiúsculas/minúsculas (padrão)
-  returnFiltered: true,      // Retorna versão filtrada
-  replaceWith: '[***]',      // Texto de substituição
-  language: 'pt-br'          // Idioma: 'pt-br', 'en' ou 'es'
+const result = moderate('Text to check', {
+  caseSensitive: false,      // Ignore case (default)
+  returnFiltered: true,      // Return filtered version
+  replaceWith: '[***]',      // Replacement text
+  language: 'pt-br'          // Language: 'pt-br', 'en' or 'es'
 });
 
-console.log(result.filteredText); // Texto censurado
+console.log(result.filteredText); // Censored text
 ```
 
-### Suporte Multi-idioma
+### Multi-language support
 
 ```typescript
 import { moderate, isClean, filter } from '@bielgennaro/content-moderation';
 
-// Português (padrão)
+// Portuguese (default)
 moderate('Texto com palavrão', { language: 'pt-br' });
 
-// Inglês
+// English
 moderate('Text with bad word', { language: 'en' });
 
-// Espanhol
+// Spanish
 moderate('Texto con mala palabra', { language: 'es' });
 
-// Exemplo completo
+// Complete example
 const englishResult = moderate('This is fucking awesome', {
   language: 'en',
   returnFiltered: true,
@@ -94,112 +94,112 @@ console.log(englishResult.filteredText);   // 'This is *** awesome'
 
 ### `isClean(text: string, options?: ModerationOptions): boolean`
 
-Verifica se o texto não contém palavras ofensivas.
+Checks if the text does not contain offensive words.
 
-**Parâmetros:**
-- `text`: Texto a ser verificado
-- `options`: Opções de moderação (opcional)
+**Parameters:**
+- `text`: Text to be checked
+- `options`: Moderation options (optional)
 
-**Retorna:** `true` se o texto estiver limpo, `false` caso contrário
+**Returns:** `true` if text is clean, `false` otherwise
 
 ---
 
 ### `moderate(text: string, options?: ModerationOptions): ModerationResult`
 
-Analisa o texto e retorna informações detalhadas sobre palavras ofensivas detectadas.
+Analyzes the text and returns detailed information about detected offensive words.
 
-**Parâmetros:**
-- `text`: Texto a ser analisado
-- `options`: Opções de moderação (opcional)
+**Parameters:**
+- `text`: Text to be analyzed
+- `options`: Moderation options (optional)
 
-**Retorna:** Objeto `ModerationResult` com:
-- `isClean`: Se o texto está limpo
-- `detectedWords`: Array com palavras ofensivas encontradas
-- `originalText`: Texto original
-- `filteredText`: Texto filtrado (se `returnFiltered: true`)
+**Returns:** `ModerationResult` object with:
+- `isClean`: Whether the text is clean
+- `detectedWords`: Array with offensive words found
+- `originalText`: Original text
+- `filteredText`: Filtered text (if `returnFiltered: true`)
 
 ---
 
 ### `filter(text: string, replaceWith?: string, options?): string`
 
-Filtra palavras ofensivas substituindo-as por um texto alternativo.
+Filters offensive words by replacing them with alternative text.
 
-**Parâmetros:**
-- `text`: Texto a ser filtrado
-- `replaceWith`: Texto substituto (padrão: `'***'`)
-- `options`: Opções adicionais (opcional)
+**Parameters:**
+- `text`: Text to be filtered
+- `replaceWith`: Replacement text (default: `'***'`)
+- `options`: Additional options (optional)
 
-**Retorna:** Texto com palavras ofensivas substituídas
+**Returns:** Text with offensive words replaced
 
 ---
 
 ### `ModerationOptions`
 
-Interface de opções para moderação:
+Options interface for moderation:
 
 ```typescript
 interface ModerationOptions {
-  caseSensitive?: boolean;    // Considera maiúsculas/minúsculas (padrão: false)
-  returnFiltered?: boolean;   // Retorna texto filtrado (padrão: false)
-  replaceWith?: string;       // Texto de substituição (padrão: '***')
-  language?: 'pt-br' | 'en' | 'es';  // Idioma (padrão: 'pt-br')
+  caseSensitive?: boolean;    // Consider case (default: false)
+  returnFiltered?: boolean;   // Return filtered text (default: false)
+  replaceWith?: string;       // Replacement text (default: '***')
+  language?: 'pt-br' | 'en' | 'es';  // Language (default: 'pt-br')
 }
 ```
 
 ### `ModerationResult`
 
-Interface do resultado da moderação:
+Moderation result interface:
 
 ```typescript
 interface ModerationResult {
-  isClean: boolean;           // Se o texto está limpo
-  detectedWords: string[];    // Palavras ofensivas detectadas
-  originalText: string;       // Texto original
-  filteredText?: string;      // Texto filtrado (se solicitado)
+  isClean: boolean;           // Whether the text is clean
+  detectedWords: string[];    // Detected offensive words
+  originalText: string;       // Original text
+  filteredText?: string;      // Filtered text (if requested)
 }
 ```
 
-## ✨ Funcionalidades
+## ✨ Features
 
-- ✅ **Suporte Multi-idioma**: Português (pt-br), Inglês (en) e Espanhol (es)
-- ✅ Detecção de palavras ofensivas
-- ✅ Normalização de texto (remove acentos para evitar evasão)
-- ✅ Suporte a case-insensitive
-- ✅ Filtragem e substituição de conteúdo ofensivo
-- ✅ TypeScript com tipagem completa
-- ✅ Zero dependências em runtime
-- ✅ Leve e performático
-- ✅ Detecção de variações com caracteres especiais (l33tspeak)
+- ✅ **Multi-language support**: Portuguese (pt-br), English (en), and Spanish (es)
+- ✅ Offensive word detection
+- ✅ Text normalization (removes accents to prevent evasion)
+- ✅ Case-insensitive support
+- ✅ Offensive content filtering and replacement
+- ✅ TypeScript with full typing
+- ✅ Zero runtime dependencies
+- ✅ Lightweight and performant
+- ✅ Detection of variations with special characters (l33tspeak)
 
-## 🔒 Segurança
+## 🔒 Security
 
-Esta biblioteca detecta:
-- Palavrões e xingamentos
-- Termos racistas e discriminatórios
-- Conteúdo sexual explícito
-- Termos ofensivos diversos
-- Variações com acentos e caracteres especiais
+This library detects:
+- Profanity and insults
+- Racist and discriminatory terms
+- Explicit sexual content
+- Various offensive terms
+- Variations with accents and special characters
 
-## 📝 Licença
+## 📝 License
 
 MIT
 
-## 👤 Autor
+## 👤 Author
 
 **bielgennaro**
 
-## 🤝 Contribuindo
+## 🤝 Contributing
 
-Contribuições, issues e pedidos de features são bem-vindos!
+Contributions, issues, and feature requests are welcome!
 
 ---
 
-**Nota:** Esta biblioteca suporta moderação de conteúdo em português brasileiro, inglês e espanhol. A lista de palavras pode necessitar de atualizações periódicas.
+**Note:** This library supports content moderation in Brazilian Portuguese, English, and Spanish. The word list may require periodic updates.
 
-## 🌍 Idiomas Suportados
+## 🌍 Supported Languages
 
-| Idioma | Código | Palavras |
+| Language | Code | Words |
 |--------|--------|----------|
-| Português (Brasil) | `pt-br` | ~890 |
-| Inglês | `en` | ~130 |
-| Espanhol | `es` | ~170 |
+| Portuguese (Brazil) | `pt-br` | ~890 |
+| English | `en` | ~130 |
+| Spanish | `es` | ~170 |
