@@ -1,6 +1,6 @@
 {
   "name": "@bielgennaro/content-moderation",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Biblioteca multi-idioma para moderação de conteúdo e detecção de palavras ofensivas (PT-BR, EN, ES)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

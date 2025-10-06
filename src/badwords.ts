@@ -886,7 +886,12 @@ export const badWords = [
     'lança-perfume',
     'droguinha',
     'traficante',
-    'm4conha'
+    'm4conha',
+    'crlh',
+    'krl',
+    'fdp',
+    'vtnc',
+    'vsf'
 ] as const;
 
 export type BadWord = (typeof badWords)[number];
