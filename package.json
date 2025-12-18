@@ -1,10 +1,16 @@
 {
   "name": "@gabrielvfdelima/content-moderation",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Biblioteca multi-idioma para moderação de conteúdo e detecção de palavras ofensivas (PT-BR, EN, ES)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "test": "jest",
@@ -23,6 +29,9 @@
     "offensive"
   ],
   "author": "bielgennaro",
+  "contributors": [
+    "gabrielvfdelima"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -30,5 +39,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gabrielvfdelima/content-moderation"
+  }
 }
