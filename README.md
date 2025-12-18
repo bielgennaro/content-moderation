@@ -1,6 +1,5 @@
-# @bielgennaro/content-moderation
-
-TypeScript library for content moderation and offensive word detection in multiple languages (Portuguese, English, and Spanish).
+This project is a fork of @bielgennaro/content-moderation.
+Original work © bielgennaro.
 
 ## 📦 Installation
 
