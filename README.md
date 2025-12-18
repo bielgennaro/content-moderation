@@ -1,18 +1,44 @@
-This project is a fork of @bielgennaro/content-moderation.
-Original work © bielgennaro.
+# @gabrielvfdelima/content-moderation
+
+> ⚠️ This project is a fork of **@bielgennaro/content-moderation**.  
+> Original work © **bielgennaro**.  
+> This fork is maintained by **gabrielvfdelima** and includes additional features and modern ESM support.
+
+TypeScript library for content moderation and offensive word detection in multiple languages
+(Portuguese, English, and Spanish).
+
+---
+
+## ✨ What’s new in this fork
+
+This fork extends the original library with improvements focused on **modern JavaScript environments** and **more flexible censorship strategies**.
+
+- ✅ **Dynamic replacement support**  
+  `replaceWith` now accepts a function `(match: string) => string`
+- ✅ **Proportional censorship**  
+  Automatically replaces offensive words with the same number of characters
+- ✅ **Native ESM support**  
+  Fully compatible with **Nuxt 3**, **Vite**, and **Node.js 18+**
+- ✅ **NodeNext module resolution**  
+  Correct ESM behavior without CommonJS interop issues
+- ✅ Fully backward compatible with the original API
+
+---
 
 ## 📦 Installation
 
 ```bash
-npm install @bielgennaro/content-moderation
+npm install @gabrielvfdelima/content-moderation
 ```
+
+---
 
 ## 🚀 Usage
 
 ### Check if text is clean
 
-```typescript
-import { isClean } from '@bielgennaro/content-moderation';
+```ts
+import { isClean } from '@gabrielvfdelima/content-moderation';
 
 if (isClean('This is clean text')) {
   console.log('Text approved!');
@@ -23,50 +49,65 @@ if (!isClean('Text with bad word')) {
 }
 ```
 
+---
+
 ### Detect offensive words
 
-```typescript
-import { moderate } from '@bielgennaro/content-moderation';
+```ts
+import { moderate } from '@gabrielvfdelima/content-moderation';
 
 const result = moderate('Some text to check');
 
-console.log(result.isClean); // true or false
-console.log(result.detectedWords); // ['word1', 'word2']
-console.log(result.originalText); // original text
+console.log(result.isClean);        // true or false
+console.log(result.detectedWords);  // ['word1', 'word2']
+console.log(result.originalText);   // original text
 ```
+
+---
 
 ### Filter offensive content
 
-```typescript
-import { filter } from '@bielgennaro/content-moderation';
+```ts
+import { filter } from '@gabrielvfdelima/content-moderation';
 
 const cleanText = filter('Text with bad word here');
 // Returns: "Text with *** here"
 
-// Customize replacement
+// Customize replacement with fixed text
 const customText = filter('Text with bad word', '[CENSORED]');
 // Returns: "Text with [CENSORED]"
 ```
 
-### Advanced moderation with options
+---
 
-```typescript
-import { moderate } from '@bielgennaro/content-moderation';
+### 🔥 Dynamic replacement (new feature)
 
-const result = moderate('Text to check', {
-  caseSensitive: false,      // Ignore case (default)
-  returnFiltered: true,      // Return filtered version
-  replaceWith: '[***]',      // Replacement text
-  language: 'pt-br'          // Language: 'pt-br', 'en' or 'es'
+You can now generate the replacement dynamically based on the detected word:
+
+```ts
+import { moderate } from '@gabrielvfdelima/content-moderation';
+
+const result = moderate('isso é uma merda', {
+  returnFiltered: true,
+  replaceWith: (match) => '*'.repeat(match.length),
 });
 
-console.log(result.filteredText); // Censored text
+console.log(result.filteredText);
+// "isso é uma *****"
 ```
 
-### Multi-language support
+This allows:
+- proportional masking
+- custom symbols
+- hashes or emojis
+- advanced moderation strategies
 
-```typescript
-import { moderate, isClean, filter } from '@bielgennaro/content-moderation';
+---
+
+## 🌍 Multi-language support
+
+```ts
+import { moderate } from '@gabrielvfdelima/content-moderation';
 
 // Portuguese (default)
 moderate('Texto com palavrão', { language: 'pt-br' });
@@ -76,18 +117,9 @@ moderate('Text with bad word', { language: 'en' });
 
 // Spanish
 moderate('Texto con mala palabra', { language: 'es' });
-
-// Complete example
-const englishResult = moderate('This is fucking awesome', {
-  language: 'en',
-  returnFiltered: true,
-  replaceWith: '***'
-});
-
-console.log(englishResult.isClean);        // false
-console.log(englishResult.detectedWords);  // ['fucking']
-console.log(englishResult.filteredText);   // 'This is *** awesome'
 ```
+
+---
 
 ## 📖 API
 
@@ -99,7 +131,8 @@ Checks if the text does not contain offensive words.
 - `text`: Text to be checked
 - `options`: Moderation options (optional)
 
-**Returns:** `true` if text is clean, `false` otherwise
+**Returns:**  
+`true` if the text is clean, `false` otherwise
 
 ---
 
@@ -111,11 +144,7 @@ Analyzes the text and returns detailed information about detected offensive word
 - `text`: Text to be analyzed
 - `options`: Moderation options (optional)
 
-**Returns:** `ModerationResult` object with:
-- `isClean`: Whether the text is clean
-- `detectedWords`: Array with offensive words found
-- `originalText`: Original text
-- `filteredText`: Filtered text (if `returnFiltered: true`)
+**Returns:** `ModerationResult`
 
 ---
 
@@ -128,28 +157,27 @@ Filters offensive words by replacing them with alternative text.
 - `replaceWith`: Replacement text (default: `'***'`)
 - `options`: Additional options (optional)
 
-**Returns:** Text with offensive words replaced
+**Returns:**  
+Text with offensive words replaced
 
 ---
 
-### `ModerationOptions`
+## 🔧 ModerationOptions
 
-Options interface for moderation:
-
-```typescript
+```ts
 interface ModerationOptions {
-  caseSensitive?: boolean;    // Consider case (default: false)
-  returnFiltered?: boolean;   // Return filtered text (default: false)
-  replaceWith?: string;       // Replacement text (default: '***')
-  language?: 'pt-br' | 'en' | 'es';  // Language (default: 'pt-br')
+  caseSensitive?: boolean;                // Consider case (default: false)
+  returnFiltered?: boolean;               // Return filtered text (default: false)
+  replaceWith?: string | ((match: string) => string);
+  language?: 'pt-br' | 'en' | 'es';       // Language (default: 'pt-br')
 }
 ```
 
-### `ModerationResult`
+---
 
-Moderation result interface:
+## 📄 ModerationResult
 
-```typescript
+```ts
 interface ModerationResult {
   isClean: boolean;           // Whether the text is clean
   detectedWords: string[];    // Detected offensive words
@@ -158,17 +186,21 @@ interface ModerationResult {
 }
 ```
 
+---
+
 ## ✨ Features
 
-- ✅ **Multi-language support**: Portuguese (pt-br), English (en), and Spanish (es)
+- ✅ Multi-language support (PT-BR, EN, ES)
 - ✅ Offensive word detection
-- ✅ Text normalization (removes accents to prevent evasion)
+- ✅ Text normalization (accent and variation resistant)
 - ✅ Case-insensitive support
-- ✅ Offensive content filtering and replacement
+- ✅ Fixed or dynamic offensive word replacement
 - ✅ TypeScript with full typing
 - ✅ Zero runtime dependencies
 - ✅ Lightweight and performant
 - ✅ Detection of variations with special characters (l33tspeak)
+
+---
 
 ## 🔒 Security
 
@@ -176,29 +208,30 @@ This library detects:
 - Profanity and insults
 - Racist and discriminatory terms
 - Explicit sexual content
-- Various offensive terms
-- Variations with accents and special characters
-
-## 📝 License
-
-MIT
-
-## 👤 Author
-
-**bielgennaro**
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
+- Offensive language variations
+- Accent and character-based evasion attempts
 
 ---
 
-**Note:** This library supports content moderation in Brazilian Portuguese, English, and Spanish. The word list may require periodic updates.
+## 📝 License
+
+MIT © **bielgennaro**  
+Fork maintained by **gabrielvfdelima**
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+If you want to contribute upstream, consider opening a pull request to the original repository.
+
+---
 
 ## 🌍 Supported Languages
 
-| Language | Code | Words |
-|--------|--------|----------|
-| Portuguese (Brazil) | `pt-br` | ~890 |
-| English | `en` | ~130 |
-| Spanish | `es` | ~170 |
+| Language | Code |
+|--------|------|
+| Portuguese (Brazil) | `pt-br` |
+| English | `en` |
+| Spanish | `es` |
