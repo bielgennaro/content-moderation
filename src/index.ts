@@ -111,3 +111,10 @@ export function filter(
 export { badWords } from "./badwords.js";
 export { dictionaries, ptBR, en, es } from "./dictionaries/index.js";
 export type { Language } from "./dictionaries/index.js";
+
+//Para resolver o problema no NUXT
+export default {
+  moderate,
+  isClean,
+  filter,
+};
