@@ -1,6 +1,6 @@
-import { ptBR } from './pt-br';
-import { en } from './en';
-import { es } from './es';
+import { ptBR } from './pt-br.js';
+import { en } from './en.js';
+import { es } from './es.js';
 
 export type Language = 'pt-br' | 'en' | 'es';
 

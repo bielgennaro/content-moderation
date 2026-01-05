@@ -1,5 +1,5 @@
-import { badWords } from './badwords';
-import { dictionaries, Language } from './dictionaries';
+import { badWords } from "./badwords.js";
+import { dictionaries, Language } from "./dictionaries/index.js";
 
 export interface ModerationResult {
   isClean: boolean;
@@ -11,7 +11,7 @@ export interface ModerationResult {
 export interface ModerationOptions {
   caseSensitive?: boolean;
   returnFiltered?: boolean;
-  replaceWith?: string;
+  replaceWith?: string | ((match: string) => string);
   language?: Language;
 }
 
@@ -20,8 +20,8 @@ export interface ModerationOptions {
  */
 function normalizeString(str: string): string {
   return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 }
 
@@ -35,11 +35,12 @@ export function moderate(
   const {
     caseSensitive = false,
     returnFiltered = false,
-    replaceWith = '***',
-    language = 'pt-br'
+    replaceWith = "***",
+    language = "pt-br",
   } = options;
 
-  // Seleciona o dicionário apropriado baseado no idioma
+  // Seleciona o dicionário apropriado baseado no idioma, 
+  // caso o usuário não preencher o idioma preferível usa o fallback badwords
   const wordsToCheck = dictionaries[language] || badWords;
 
   const textToCheck = caseSensitive ? text : text.toLowerCase();
@@ -52,16 +53,26 @@ export function moderate(
     const normalizedBadWord = normalizeString(badWord);
 
     // Verifica correspondência exata ou normalizada
-    const regex = new RegExp(`\\b${badWordToCheck.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-    const normalizedRegex = new RegExp(`\\b${normalizedBadWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    const regex = new RegExp(
+      `\\b${badWordToCheck.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
+      "gi"
+    );
+    const normalizedRegex = new RegExp(
+      `\\b${normalizedBadWord.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
+      "gi"
+    );
 
     if (regex.test(textToCheck) || normalizedRegex.test(normalizedText)) {
+      //Evita palavras repetidas
       if (!detectedWords.includes(badWord)) {
         detectedWords.push(badWord);
       }
 
+      //Faz o filtro do texto se o usuário decidiu retornar o texto filtrado
       if (returnFiltered) {
-        filteredText = filteredText.replace(regex, replaceWith);
+        filteredText = filteredText.replace(regex, (match) =>
+          typeof replaceWith == "function" ? replaceWith(match) : replaceWith
+        );
       }
     }
   }
@@ -70,7 +81,7 @@ export function moderate(
     isClean: detectedWords.length === 0,
     detectedWords,
     originalText: text,
-    ...(returnFiltered && { filteredText })
+    ...(returnFiltered && { filteredText }),
   };
 }
 
@@ -86,13 +97,24 @@ export function isClean(text: string, options?: ModerationOptions): boolean {
  */
 export function filter(
   text: string,
-  replaceWith: string = '***',
-  options?: Omit<ModerationOptions, 'replaceWith' | 'returnFiltered'>
+  replaceWith: string = "***",
+  options?: Omit<ModerationOptions, "replaceWith" | "returnFiltered">
 ): string {
-  const result = moderate(text, { ...options, returnFiltered: true, replaceWith });
+  const result = moderate(text, {
+    ...options,
+    returnFiltered: true,
+    replaceWith,
+  });
   return result.filteredText || text;
 }
 
-export { badWords } from './badwords';
-export { dictionaries, ptBR, en, es } from './dictionaries';
-export type { Language } from './dictionaries';
+export { badWords } from "./badwords.js";
+export { dictionaries, ptBR, en, es } from "./dictionaries/index.js";
+export type { Language } from "./dictionaries/index.js";
+
+//Para resolver o problema no NUXT
+export default {
+  moderate,
+  isClean,
+  filter,
+};
